@@ -5,26 +5,40 @@
     <title>Title</title>
 </head>
 <body>
+
 <?php
 
-$dir_path = ['MyDocuments/','MyDocuments/teaching', 'MyDocuments/resear/', "MyDocuments/teaching/105/", 'MyDocuments/teaching/103/'];
+$dirname = 'MyDocuments/';
 
 
-for ($j = 0; $j < count($dir_path); $j++) {
-$scan = scandir($dir_path[$j]);
+function scan($dirname)
+{
+    if (is_dir($dirname)) {
+        if ($dh = opendir($dirname)) {
+            while (($file = readdir($dh)) !== false) {
+                $filetype = filetype($dirname);
+                if ($file !== '.' and $file !== '..') {
+                    $fileName = $file;
+                    if ($filetype === 'dir') {
 
-for ($i = 2; $i < count($scan); $i++) {
-    $fileName = $scan[$i];
-    $format = substr($fileName, stripos($fileName, "."));
-
-    if ($format == '.jpg' or $format == '.png' or $format == '.jpeg' or $format == '.gif') //  avelacreq cer uzac format ev inqa gtni
-    {
-
-        print_r("<img src=" . $dir_path[$j] . '/' . $scan[$i] . ">");
+                        scan($dirname . $file . '/');
+                    }
+                    $format = substr($fileName, stripos($fileName, "."));
+                    if ($format == '.jpg' or $format == '.png' or $format == '.jpeg' or $format == '.gif') {
+                        print_r("<ul><li><img src=" . $dirname . $fileName . ">".$file.'</li></ul>');
+                    }
+                }
+            }
+        }
+        closedir($dh);
     }
+}
 
-}
-}
+scan($dirname);
+
+die;
+
+
 ?>
 </body>
 </html>
